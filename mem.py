@@ -49,7 +49,7 @@ def main():
     pattern = re.compile("^.+,.+\n?$")
     for d in data:
         if not pattern.match(d):
-            print("Invalid file line: {0}".format(d), file=sys.stderr)
+            print("Invalid file line: {0}".format(d), file=stderr)
             exit(1)
 
     # Deserialize data in dictionary
