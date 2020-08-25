@@ -19,6 +19,9 @@ class Snake:
     
     # Update the snake and redraw it
     def update(self, game):
+        # Get the other snake
+        other = game.bsnake if self is game.asnake else game.asnake
+
         head = self.body[0]
         last = head.copy()
         
@@ -29,7 +32,7 @@ class Snake:
         # Check bounds
         if not (0 <= head[0] < game.wwidth) or not (0 <= head[1] < game.wheight):
             if not game.toroidal:
-                game.over(f"Snake '{self.headchar}' went out of bounds")
+                game.over(f"Snake {self.headchar} went out of bounds >> {other.headchar} WINS!")
                 return
             head[0] %= game.wwidth
             head[1] %= game.wheight
@@ -53,7 +56,7 @@ class Snake:
 
         # Check auto-collision
         if self.body[0] in self.body[1:-1]:
-            game.over(f"Snake '{self.headchar}' bumped on itself")
+            game.over(f"Snake {self.headchar} bumped on itself >> {other.headchar} WINS!")
             return
 
         # Draw the snake
@@ -155,7 +158,7 @@ class Game:
 
             # Other controls
             elif c == ord('q'):
-                return "Player quit game"
+                return "Players quit game >> PARITY"
             elif c == ord('p'):
                 prompt = "GAME PAUSED. PRESS p TO RESUME"
                 l = len(prompt)
@@ -173,10 +176,11 @@ class Game:
                 b.update(self)
 
                 # Check collisions
+                prompt = "Snake {loser} bumped on {winner} >> {winner} WINS!"
                 if a.collides_with(b):
-                    self.over(f"Snake '{a.headchar}' bumped '{b.headchar}'")
+                    self.over(prompt.format(loser=a.headchar, winner=b.headchar))
                 elif b.collides_with(a):
-                    self.over(f"Snake '{b.headchar}' bumped on '{a.headchar}'")
+                    self.over(prompt.format(loser=b.headchar, winner=a.headchar))
                 
                 # TODO: Check if player wins
             
@@ -208,8 +212,8 @@ def main(stdscr, args):
 if __name__ == "__main__":
     parser = ArgumentParser(
         description="A multiplayer curses implementation of the game Snake. Press " +
-            "P to pause and Q/ESC to quit. To move the snake use the arrow keys " +
-            "and WASD.")
+            "P to pause and Q/ESC to quit. To move snake A use the arrow keys " +
+            "and WASD for snake B.")
     parser.add_argument("--toroidal", "-t", action="store_true", help=
                         "Activate toroidal space")
     args = parser.parse_args()
