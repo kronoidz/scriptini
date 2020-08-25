@@ -2,6 +2,8 @@
 
 # A multiplayer version of snake.py
 
+#FIXME: situations of parity such as simultaneous collisions are not handled properly
+
 import curses
 from random import randrange
 from argparse import ArgumentParser
@@ -192,7 +194,7 @@ class Game:
                     checkpie = False
             
                 if checkpie:
-                    
+
                     # Check if snakes ate pie
                     if a.body[0] == self.pie:
                         a.grow = True
