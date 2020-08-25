@@ -175,25 +175,34 @@ class Game:
                 a.update(self)
                 b.update(self)
 
+                checkpie = True
+
                 # Check collisions
                 prompt = "Snake {loser} bumped on {winner} >> {winner} WINS!"
                 if a.collides_with(b):
                     self.over(prompt.format(loser=a.headchar, winner=b.headchar))
+                    checkpie = False
                 elif b.collides_with(a):
                     self.over(prompt.format(loser=b.headchar, winner=a.headchar))
+                    checkpie = False
                 
-                # TODO: Check if player wins
+                # Parity (very unlikely circumstance)
+                if len(a.body) == len(b.body) and len(a.body) + len(b.body) == self.wwidth * self.wheight:
+                    self.over("PARITY!")
+                    checkpie = False
             
-                # Check if snakes ate pie
-                if a.body[0] == self.pie:
-                    a.grow = True
-                    self.makepie()
-                elif b.body[0] == self.pie:
-                    b.grow = True
-                    self.makepie()
+                if checkpie:
+                    
+                    # Check if snakes ate pie
+                    if a.body[0] == self.pie:
+                        a.grow = True
+                        self.makepie()
+                    elif b.body[0] == self.pie:
+                        b.grow = True
+                        self.makepie()
             
-                # Draw pie
-                self.screen.addch(self.pie[1], self.pie[0], curses.ACS_PI)
+                    # Draw pie
+                    self.screen.addch(self.pie[1], self.pie[0], curses.ACS_PI)
                 
                 self.screen.refresh()
                 
